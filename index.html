@@ -1,83 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Messaging App with Dynamic UID & Search</title>
-  <style>
-    /* Styles remain the same */
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy and Paste Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Main Messaging App Screen -->
-  <div id="app-container" class="app-container">
-    <!-- Contact List Sidebar -->
-    <div class="sidebar">
-      <h2>Contacts</h2>
-      <!-- Contact Search Box -->
-      <div class="search-box" id="search-box">
-        <input type="text" id="contact-search" placeholder="Search by username or UID" oninput="searchContact()">
-      </div>
-      <ul class="contact-list" id="contact-list">
-        <!-- Contacts will be dynamically added here -->
-      </ul>
-    </div>
+<div class="container">
+    <h2>Video Copy and Paste</h2>
 
-    <!-- Chat Window -->
-    <div class="chat-window">
-      <!-- Message History -->
-      <div class="message-history" id="message-history">
-        <!-- Messages will be dynamically added here -->
-      </div>
+    <button id="uploadButton">Paste Video from Local</button>
+    <input type="file" id="videoFile" accept="video/*" style="display:none;">
+    <button id="downloadButton">Copy Video to Local</button>
 
-      <!-- Message Input -->
-      <div class="message-input">
-        <input type="text" id="message-input" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-      </div>
-    </div>
+    <h3 id="message"></h3>
+</div>
 
-  </div>
+<script>
+    let uploadedVideo;
 
-  <script>
-    // Function to check if input is "-you" and redirect
-    function checkForRedirect(input) {
-      if (input === "-you") {
-        window.location.href = "https://beauty-of-princess.web.app";
-      }
-    }
+    // Handle Upload Button Click
+    document.getElementById('uploadButton').addEventListener('click', function() {
+        const videoFileInput = document.getElementById('videoFile');
+        videoFileInput.click();  // Trigger file input
+    });
 
-    // Function to send a message
-    function sendMessage() {
-      const messageInput = document.getElementById('message-input');
-      const messageText = messageInput.value.trim();
+    // Handle File Input Change
+    document.getElementById('videoFile').addEventListener('change', function(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            uploadedVideo = files[0];
+            document.getElementById('message').textContent = 'Video uploaded: ' + uploadedVideo.name;
+        }
+    });
 
-      if (messageText !== '') {
-        // Check for redirect condition
-        checkForRedirect(messageText); 
-
-        const messageHistory = document.getElementById('message-history');
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message', 'sent');
-        messageElement.innerText = messageText;
-
-        // Append the message to the history
-        messageHistory.appendChild(messageElement);
-
-        // Clear the input
-        messageInput.value = '';
-
-        // Scroll to the latest message
-        messageHistory.scrollTop = messageHistory.scrollHeight;
-      }
-    }
-
-    // Function to search for contacts (not modified)
-    function searchContact() {
-      // Your contact search code
-    }
-  </script>
+    // Handle Download Button Click
+    document.getElementById('downloadButton').addEventListener('click', function() {
+        if (uploadedVideo) {
+            const url = URL.createObjectURL(uploadedVideo);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = uploadedVideo.name; // The original file name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            document.getElementById('message').textContent = 'Video copied to local device: ' + uploadedVideo.name;
+        } else {
+            document.getElementById('message').textContent = 'No video to copy. Please upload a video first.';
+        }
+    });
+</script>
 
 </body>
 </html>
